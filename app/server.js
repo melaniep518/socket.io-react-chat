@@ -1,3 +1,4 @@
+// REQUIRE NECESSARY PACKAGES
 const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
@@ -13,8 +14,21 @@ io.sockets.on('connection', function(socket) {
 // On socket disconnect:
   socket.on('disconnect', function(data) {
     connections.splice(connections.indexOf(socket), 1);
+    users.splice(users.indexOf(socket.username), 1);
     console.log('Disconnected: %s sockets connected', connections.length);
+    console.log('USERS:', users);
   });
+
+// New username entered
+  socket.on('new-user', function(username) {
+    // Add new username as a property of that socket connection
+    socket.username = username;
+    // Push into users array the new username so that there will be a log of all users currently in the chat
+    users.push(socket.username);
+    console.log('NEW USER:', socket.username);
+    console.log('USERS:', users);
+  })
+
 // Send message
   socket.on('new-message', function(msg) {
     io.emit('recieve-message', msg)
@@ -23,7 +37,7 @@ io.sockets.on('connection', function(socket) {
 
 // Run the server
 server.listen(process.env.PORT || 3000);
-console.log('server running...');
+console.log('Server running at localhost:3000');
 
 
 // Create an index  route

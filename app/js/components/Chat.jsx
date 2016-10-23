@@ -1,15 +1,21 @@
+// IMPORT MODULE DEPENDENCIES
 import React from 'react';
 import ReactDOM from 'react-dom'; 
-import io from 'socket.io-client'
+import io from 'socket.io-client';
 
-const socket = io('http://localhost:3000')
+// IMPORT COMPONENTS
+import {Login} from './login.jsx';
 
+// CREATE SOCKET NAMESPACE
+const socket = io('http://localhost:3000');
+
+// CHAT COMPONENT
 const Chat = React.createClass({
   getInitialState: function() {
     return ({
       messages: [],
       socket: socket,
-      user: null
+      // user: null
     })
   },
 
@@ -28,18 +34,11 @@ const Chat = React.createClass({
     let body = document.getElementById('message').value;
     let message = {
       body: body,
-      user: this.state.user || 'guest'
+      // user: this.state.user || 'guest'
     }
     this.state.socket.emit('new-message', message);
     // console.log(message);
     document.getElementById('message').value = "";
-  },
-
-  getUser: function() {
-    let user = document.getElementById('user').value;
-    this.setState({
-      user: user
-    })
   },
 
   render: function() {
@@ -55,13 +54,13 @@ const Chat = React.createClass({
         <ul>
          {messages} 
         </ul>
-        <input id="user" type="text" placeholder="Enter a username"/>
-        <button onClick={that.getUser}>Create Username</button><br/>
         <input id="message" type="text"/>
         <button onClick={that.sumbitMessage}>Send Message</button>
+        <Login/>
       </div>
     )
   }
 });
 
-ReactDOM.render(<Chat/>, document.getElementById('chat'));
+// EXPORT MODULES
+export {socket, Chat};

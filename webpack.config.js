@@ -1,5 +1,8 @@
+var autoprefixer = require('autoprefixer');
+var path = require('path');
+
 module.exports = {
-  entry: "./app/js/app.jsx",
+  entry: "./app/js/entry.jsx",
   output: {
     path: "./app/js/",
     filename: "bundle.js",
@@ -17,11 +20,48 @@ module.exports = {
           presets: ['es2015', 'react']
           //transpiling & compilation
         }
-      }
+      },
+      {
+        test: /\.css$/,
+        loader: 'style!css!'
+      },
+      {
+        test: /\.(ico|jpg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/,
+        exclude: /\/favicon.ico$/,
+        loader: 'file',
+        query: {
+          name: 'static/media/[name].[hash:8].[ext]'
+        }
+      },
+      {
+        test: /\.(mp4|webm)(\?.*)?$/,
+        loader: 'url',
+        query: {
+          limit: 10000,
+          name: 'static/media/[name].[hash:8].[ext]'
+        }
+      },
+
     ]
   },
-  devtool: 'source-map',
+   postcss: function() {
+    return [
+      autoprefixer({
+        browsers: [
+          '>1%',
+          'last 4 versions',
+          'Firefox ESR',
+          'not ie < 9', // React doesn't support IE8 anyway
+        ]
+      }),
+    ];
+  },
+  devtool: 'eval-source-map',
   resolve: {
-    extensions: ["", ".js", ".jsx" ]
+      root: path.resolve(__dirname),
+      alias: {
+        loginReducer: 'app/js/reducers/loginReducer'
+      },
+      extensions: ["", ".js", ".jsx" ]
   }
 };
